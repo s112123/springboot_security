@@ -7,12 +7,47 @@
 <body>
   <div class="container">
     <h3>JOIN</h3>
-    <form th:action="@{/member/join}" method="post">
+    <!-- <form th:action="@{/members}" method="post"> -->
       <input type="type" name="username" placeholder="username" />
       <input type="password" name="password" placeholder="password" />
       <input type="type" name="name" placeholder="name" />
-      <button type="submit">JOIN</button>
-    </form>
+      <button type="button" id="btnJoin">JOIN</button>
+    <!-- </form> -->
   </div>
+
+  <!-- Javascript -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const btnJoin = document.getElementById('btnJoin');
+    btnJoin.addEventListener('click', () => {
+      const username = document.querySelector('input[name=username]');
+      const password = document.querySelector('input[name=password]');
+      const name = document.querySelector('input[name=name]');
+
+      const formData = {
+        username: username.value,
+        password: password.value,
+        name: name.value
+      };
+
+      addMember(formData)
+        .then((response) => {
+          alert(response.data);
+          location.replace('/login');
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          console.log('completed');
+        });
+    });
+
+    // 등록하기
+    async function addMember(formData) {
+      const res = await axios.post('/members', formData);
+      return res;
+    }
+  </script>
 </body>
 </html>

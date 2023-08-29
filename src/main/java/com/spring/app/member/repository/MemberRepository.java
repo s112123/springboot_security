@@ -2,9 +2,11 @@ package com.spring.app.member.repository;
 
 import com.spring.app.member.entity.Member;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 @Mapper
 public interface MemberRepository {
 
