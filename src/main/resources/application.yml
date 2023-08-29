@@ -1,0 +1,12 @@
+# DB
+spring:
+  datasource:
+    diver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/springboot?useUnicode=true&serverTimezone=Asia/Seoul&useSSL=false
+    username: root
+    password: '0000'
+
+# Mybatis
+mybatis:
+  config: classpath:mybatis/config.xml
+  mapper-locations: classpath:mybatis/mapper-*.xml
