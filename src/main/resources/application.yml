@@ -10,10 +10,3 @@ spring:
 mybatis:
   config: classpath:mybatis/config.xml
   mapper-locations: classpath:mybatis/mapper-*.xml
-
-# logging level
-logging:
-  level:
-    org:
-      springframework:
-        security: trace

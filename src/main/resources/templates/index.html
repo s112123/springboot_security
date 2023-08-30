@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
   <meta charset="UTF-8">
   <title>Home</title>
@@ -8,10 +9,14 @@
   <div class="container">
     <h3>Home</h3>
     <div>
-      <a th:href="@{/member/join}">JOIN</a>
-      <a th:href="@{/login}">LOGIN</a>
-      <a th:href="@{/logout}">LOGOUT</a>
-      <a th:href="@{/members}">MEMBER</a>
+      <span sec:authorize="isAnonymous()">
+        <a th:href="@{/member/join}">JOIN</a>
+        <a th:href="@{/login}">LOGIN</a>
+      </span>
+      <span sec:authorize="isAuthenticated()">
+        <a th:href="@{/logout}">LOGOUT</a>
+        <a th:href="@{/members}">MEMBER</a>
+      </span>
     </div>
   </div>
 </body>

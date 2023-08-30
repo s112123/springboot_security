@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,5 +32,12 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> optional = memberRepository.selectOneByUsername(username);
         return optional;
     }
-    
+
+    // 목록조회
+    @Override
+    public List<Member> getMembers() {
+        List<Member> members = memberRepository.selectAll();
+        return members;
+    }
+
 }
