@@ -31,8 +31,6 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     public Authentication attemptAuthentication(
             HttpServletRequest request, HttpServletResponse response
     ) throws AuthenticationException, IOException, ServletException {
-        log.info("LoginFilter!!!!!");
-
         // POST 요청인지 확인
         if (request.getMethod().equalsIgnoreCase("GET")) {
             log.info("GET METHOD NOT SUPPORTED");

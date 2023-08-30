@@ -10,3 +10,10 @@ spring:
 mybatis:
   config: classpath:mybatis/config.xml
   mapper-locations: classpath:mybatis/mapper-*.xml
+
+# JWT Secret Key
+com:
+  spring:
+    app:
+      jwt:
+        secret-key: 0123456789

@@ -1,9 +1,11 @@
 package com.spring.app.config;
 
 import com.spring.app.filter.LoginFilter;
+import com.spring.app.filter.TokenCheckFilter;
 import com.spring.app.handler.LoginSuccessHandler;
 import com.spring.app.handler.handler_403;
 import com.spring.app.member.service.SecurityUserDetailsService;
+import com.spring.app.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +35,7 @@ public class SecurityConfig {
 
     private final DataSource dataSource;
     private final SecurityUserDetailsService securityUserDetailsService;
+    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -91,15 +94,20 @@ public class SecurityConfig {
         loginFilter.setAuthenticationManager(authenticationManager);
 
         // LoginSuccessHandler 설정
-        LoginSuccessHandler successHandler = new LoginSuccessHandler();
+        LoginSuccessHandler successHandler = new LoginSuccessHandler(jwtUtil);
         loginFilter.setAuthenticationSuccessHandler(successHandler);
 
         // 필터 설정
         http
                 .authenticationManager(authenticationManager)
-                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenCheckFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    private TokenCheckFilter tokenCheckFilter(JwtUtil jwtUtil) {
+        return new TokenCheckFilter(jwtUtil);
     }
 
     @Bean
