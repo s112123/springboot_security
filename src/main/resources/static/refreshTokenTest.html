@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <h3>Access Token</h3>
+  <p class="old-access"></p>
+  <p class="access-result"></p>
+  <hr />
+  <h3>Refresh Token</h3>
+  <p class="old-refresh"></p>
+  <p class="refresh-result"></p>
+  <button class="btnRefresh">REFRESH</button>
+
+  <!-- Javascript -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+      // 브라우저에 Local Strorage에 저장된 토큰 가져오기
+      const oldAccessToken = localStorage.getItem('accessToken');
+      const oldRefreshToken = localStorage.getItem('refreshToken');
+
+      document.querySelector('.old-access').innerHTML = oldAccessToken;
+      document.querySelector('.old-refresh').innerHTML = oldRefreshToken;
+
+      const btnRefresh = document.querySelector('.btnRefresh');
+      btnRefresh.addEventListener('click', () => {
+        axios.post('/refreshToken', {accessToken: oldAccessToken, refreshToken: oldRefreshToken})
+          .then(response => {
+            const newAccessToken = response.data.accessToken;
+            const newRefreshToken = response.data.refreshToken;
+
+            // RefreshTokenFilter를 통과한 후, 기존 토큰의 값이 같으면 그대로, 다르면 새로운 토큰 값
+            document.querySelector('.access-result').innerHTML =
+              (oldAccessToken !== newAccessToken) ? newAccessToken : 'old';
+            document.querySelector('.refresh-result').innerHTML =
+              (oldRefreshToken !== newRefreshToken) ? newRefreshToken : 'old';
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }, false);
+  </script>
+</body>
+</html>

@@ -1,11 +1,15 @@
 package com.spring.app.filter;
 
 import com.spring.app.exception.AccessTokenException;
+import com.spring.app.member.service.SecurityUserDetailsService;
 import com.spring.app.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -18,6 +22,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenCheckFilter extends OncePerRequestFilter {
 
+    // SecurityUserDetailsService를 이용해서 JWT의 username 값으로 사용자 정보를 얻어온다
+    private final SecurityUserDetailsService securityUserDetailsService;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -36,12 +42,24 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         // 요청주소가 '/members' 로 시작하는 경우
         // Access Token에 문제가 있을 때, 자동으로 브라우저에 에러메시지를 상태코드와 함께 전송하도록 처리
         try {
-            validateAccessToken(request);
+            Map<String, Object> payload = validateAccessToken(request);
+
+            // @PreAuthorize 적용을 위한 설정
+            // username으로 UserDetails를 구한다
+            String username = (String) payload.get("username");
+            UserDetails userDetails = securityUserDetailsService.loadUserByUsername(username);
+
+            // UsernamePasswordAuthenticationToken 객체를 생성한다
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            // UsernamePasswordAuthenticationToken 객체를 스프링 시큐리티에서 사용할 수 있도록 한다
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
             filterChain.doFilter(request, response);
         } catch (AccessTokenException accessTokenException) {
             accessTokenException.sendResponseError(response);
         }
-
     }
 
     // Access Token 검증

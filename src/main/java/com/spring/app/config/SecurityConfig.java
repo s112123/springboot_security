@@ -1,6 +1,7 @@
 package com.spring.app.config;
 
 import com.spring.app.filter.LoginFilter;
+import com.spring.app.filter.RefreshTokenFilter;
 import com.spring.app.filter.TokenCheckFilter;
 import com.spring.app.handler.LoginSuccessHandler;
 import com.spring.app.handler.handler_403;
@@ -101,13 +102,14 @@ public class SecurityConfig {
         http
                 .authenticationManager(authenticationManager)
                 .addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(tokenCheckFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(tokenCheckFilter(securityUserDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new RefreshTokenFilter("/refreshToken", jwtUtil), TokenCheckFilter.class);
 
         return http.build();
     }
 
-    private TokenCheckFilter tokenCheckFilter(JwtUtil jwtUtil) {
-        return new TokenCheckFilter(jwtUtil);
+    private TokenCheckFilter tokenCheckFilter(SecurityUserDetailsService securityUserDetailsService, JwtUtil jwtUtil) {
+        return new TokenCheckFilter(securityUserDetailsService, jwtUtil);
     }
 
     @Bean

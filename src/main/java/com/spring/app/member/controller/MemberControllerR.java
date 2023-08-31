@@ -12,14 +12,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/members")
-//@PreAuthorize("hasRole('ROLE_USER')")
+@PreAuthorize("hasRole('ROLE_USER')")
 @RequiredArgsConstructor
 public class MemberControllerR {
 
     private final MemberService memberService;
 
     // 목록조회
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<List<Member>> memberList() {
         List<Member> members = memberService.getMembers();
@@ -27,7 +27,7 @@ public class MemberControllerR {
     }
 
     // 등록하기
-    //@PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()")
     @PostMapping
     public String join(@RequestBody Member member) {
         memberService.addMember(member);
